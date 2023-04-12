@@ -42,14 +42,13 @@ if (empty($username)) {
     die("Error: Username is missing.");
 }
 
-$regexPassword ;
+$regexPassword  = "/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#\$!€()\-])(?=.*[^\s])[\S]{8,32}$/";
 if (!preg_match($regexPassword, $password)){
 	die("Error: Insert a valid password");
 }
 
-
 // Check if the account already exists in the database
-$query = "SELECT * FROM table_name WHERE email = :email OR username = :username";
+$query = "SELECT * FROM users WHERE email = :email OR username = :username";
 $stmt = $conn->prepare($query);
 $stmt->bindParam(":email", $email);
 $stmt->bindParam(":username", $username);
@@ -61,20 +60,40 @@ if ($result) {
     die("Error: Account already exists.");
 } else {
     // Register the new account in the database
-    // TODO insert table name
 	// TODO insert all the records
-	$query = "INSERT INTO table_name (nome, cognome, email, username, password) VALUES (:nome, :cognome, :email, :username, :password)";
+	$query = "INSERT INTO users (uniq_id, name, surname, email, username, password, tfa_active, account_active, flagged_to, confirm_code, last_login, last_password_change, login_attempt) VALUES (:userUniqId, :name, :surname, :email, :username, :password, :tfaActive, :accountActive,:flaggedTo, :confirmCode, :lastLogin, :lastPasswordChange, :loginAttempt)";
     $stmt = $conn->prepare($query);
-    $stmt->bindParam(":nome", $name);
-    $stmt->bindParam(":cognome", $surname);
+
+	// prepare variables
+	$userUniqId = sha1($username.uniqid());
+	$confirmCode = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+	$lastPasswordChange = "null";
+	$lastLogin = time();
+	$
+	$loginAttempt = 0;
+	$tfaActice = 0;
+	// Hash the password before inserting it into the database
+    $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+	
+	// bind params
+	$stmt->bindParam(":userUniqId", $userUniqId);
+    $stmt->bindParam(":name", $name);
+    $stmt->bindParam(":surname", $surname);
     $stmt->bindParam(":email", $email);
     $stmt->bindParam(":username", $username);
-    // Hash the password before inserting it into the database
-    $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
     $stmt->bindParam(":password", $hashedPassword);
+	$stmt->bindParam(":tfaActive", $);
+	$stmt->bindParam(":accountActive", $);
+	$stmt->bindParam(":flaggedTo", $);
+	$stmt->bindParam(":confirmCode", $);
+	$stmt->bindParam(":lastLogin", $);
+	$stmt->bindParam(":lastPasswordChange", );
+	$stmt->bindParam(":loginAttempt", "0");
     $stmt->execute();
-
-
+	// 
+	// TODO finish the script
+	// 
+	
 	//////////////////////////////////////////////////////////////
 	
 	// TODO create a mail template for email confirm code
@@ -85,6 +104,7 @@ if ($result) {
 
 	// TODO create an array that contains info to insert into the message
 
+	
 	mailer();
 
 
