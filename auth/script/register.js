@@ -84,3 +84,5 @@ function submitRegistration(event) {
 
 // Add event listener to the form submit button
 document.getElementById("registrationForm").addEventListener("submit", submitRegistration);
+
+// TODO add functions to check and validate user input
