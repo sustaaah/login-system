@@ -75,11 +75,10 @@ if ($result) {
 	$flaggedTo = "null";
 	$loginAttempt = 0;
 	$accountActive = 0;
-
 	// Hash the password before inserting it into the database
 	$hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
-	// bind params
+	// bind params //
 	$stmt->bindParam(":userUniqId", $userUniqId);
 	$stmt->bindParam(":name", $name);
 	$stmt->bindParam(":surname", $surname);
@@ -106,15 +105,22 @@ if ($result) {
 
 	// TODO create a mail template for email confirm code
 	// TODO sent code
-	// TODO save code in db
 	// TODO set the account as 'flagged' or 'blocked' as soon as the email is confirmed
 	// TODO redirect to verify.html page
 
-	// TODO create an array that contains info to insert into the message
 
+	//
+	// array params for account confirmation and activation
+	// 1: template name
+	// 2: name
+	// 3: surname
+	// 4: email address
+	// 5: confirmation code
+	//
+	$mailerParams = array("template" => "confirmRegistration", "name" => $name, "surname" => $surname, "email" => $email, "confirmationCode" => $confirmationCode);
+	mailer($mailerParams);
 
-	mailer();
-
+	
 
 
 
@@ -123,5 +129,9 @@ if ($result) {
 
 	echo "Account registered successfully.";
 }
+
+// TODO create a json response for js
+echo json_encode(array("status" => $sttus));
+
 
 ?>

@@ -7,33 +7,24 @@ require 'lib/PHPMailer/SMTP.php';
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-function mailer($template, $to, $firstName, $secondName, $data1, $data2, $data3)
+function mailer($params)
 {
 	require 'config.php';
 
-	// Dichiarazione delle variabili per il messaggio
-	$nome = $firstName;
-	$cognome = $secondName;
-	$email = $to;
+	switch ($params['template']) {
+		case "accountConfirmation": // array params for account confirmation and activation 1: template name 2: name 3: surname 4: email address 5: confirmation code
+			$message = file_get_contents('confirmRegistration.html');
+			$message = str_replace("[NAME]", $params['name'], $message);
+			$message = str_replace("[EMAIL]", $params['email'], $message);
+			$message = str_replace("[CODE]", $params['confirmationCode'], $message);
 
-	// TODO create switcha
-
-	switch ($template) {
-		case "verifyMail":
+			$subject = "Confirm Registration";
 			break;
 
 		default:
 			print('error');
 			break;
 	}
-
-	// Leggi il contenuto del file messaggio.html
-	$messaggio = file_get_contents('messaggio.html');
-
-	// Sostituisci le variabili nel messaggio
-	$messaggio = str_replace("[NOME]", $firstName, $messaggio);
-	$messaggio = str_replace("[COGNOME]", $secondName, $messaggio);
-	$messaggio = str_replace("[EMAIL]", $to, $messaggio);
 
 	// Crea una nuova istanza di PHPMailer
 	$mail = new PHPMailer(true);
@@ -50,24 +41,18 @@ function mailer($template, $to, $firstName, $secondName, $data1, $data2, $data3)
 
 		// Configura i dettagli del mittente e del destinatario
 		$mail->setFrom($req_smtp_from_mail, $req_smtp_from_name);
-		$mail->addAddress('destinatario@example.com', 'Nome del destinatario'); // FIXME
-
+		$mail->addAddress($params['email'], $params['name'] . $params['surname']);
 		// Configura l'oggetto e il corpo del messaggio
-		$mail->Subject = 'Oggetto dell\'email'; // FIXME
-		$mail->Body = $messaggio; // FIXME
+		$mail->Subject = $subject;
+		$mail->Body = $message;
 		$mail->isHTML(true); // Imposta il formato del messaggio come HTML
 
 		// Invia l'email
 		$mail->send();
-		echo 'Email inviata correttamente!'; // FIXME
+		return true;
 	}
 	catch (Exception $e) {
-		echo 'Errore durante l\'invio dell\'email: ' . $mail->ErrorInfo; // FIXME
-	// TODO implement error code
+		return false;
 	}
 }
-
-
-
-
 ?>

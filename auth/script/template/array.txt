@@ -1,0 +1,10 @@
+//
+// array params for account confirmation and activation
+// 1: template name
+// 2: name
+// 3: surname
+// 4: email address
+// 5: confirmation code
+//
+$mailerParams = array("template" => "confirmRegistration", "name" => $name, "surname" => $surname, "email" => $email, "confirmationCode" => $confirmationCode);
+
