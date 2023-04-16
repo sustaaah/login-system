@@ -21,14 +21,15 @@ $password = $_POST['password']; // Password of the account to register
 
 // Sanitize and validate user input
 // TODO validate name with regex
+$regexName = "/^[A-Za-z]+$/";
 $name = filter_var($name, FILTER_SANITIZE_STRING);
-if (empty($name)) {
+if (empty($name) || !preg_match($regexName, $name)) {
 	die("Error: First name is missing.");
 }
 
 // TODO validate surname with regex
 $surname = filter_var($surname, FILTER_SANITIZE_STRING);
-if (empty($surname)) {
+if (empty($surname) || !preg_match($regexName, $surname)) {
 	die("Error: Last name is missing.");
 }
 
@@ -103,8 +104,6 @@ if ($result) {
 
 	//////////////////////////////////////////////////////////////
 
-	// TODO create a mail template for email confirm code
-	// TODO sent code
 	// TODO set the account as 'flagged' or 'blocked' as soon as the email is confirmed
 	// TODO redirect to verify.html page
 
@@ -125,13 +124,11 @@ if ($result) {
 
 
 	//////////////////////////////////////////////////////////////
-
-
-	echo "Account registered successfully.";
+	$status = "success";
 }
 
 // TODO create a json response for js
-echo json_encode(array("status" => $sttus));
+echo json_encode(array("status" => $status));
 
 
 ?>
