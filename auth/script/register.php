@@ -43,17 +43,6 @@ if (!preg_match($regexPassword, $password)) {
 	die("Error: Insert a valid password");
 }
 
-print($name);
-print('<br>');
-print($surname);
-print('<br>');
-print($email);
-print('<br>');
-print($username);
-print('<br>');
-print($password);
-print('<br>');
-
 // Check if the account already exists in the database
 $query = "SELECT * FROM users WHERE email = :email OR username = :username";
 $stmt = $conn->prepare($query);
@@ -99,8 +88,6 @@ if ($result) {
 	$stmt->bindParam(":lastPasswordChange", $timestamp);
 	$stmt->bindParam(":loginAttempt", $loginAttempt);
 	$stmt->bindParam(":registration_date", $timestamp);
-	
-	
 	
 	$stmt->execute();
 
