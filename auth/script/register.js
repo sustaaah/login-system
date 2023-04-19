@@ -1,5 +1,3 @@
-//  TODO check the file
-
 // Function to submit the form via Ajax
 function submitRegistration(event) {
 	event.preventDefault(); // Prevent default form behavior
@@ -53,8 +51,8 @@ function submitRegistration(event) {
 
 	// Create an XMLHttpRequest object
 	var xhr = new XMLHttpRequest();
-	xhr.open("POST", "register.php", true);
-	xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+	xhr.open("POST", "script/register.php", true);
+	xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
 
 	// Handle the backend or API response
 	xhr.onload = function () {
@@ -70,19 +68,12 @@ function submitRegistration(event) {
 		console.error("An error occurred while making the request.");
 	};
 
+	// Convert form data to URL-encoded format
+	var formData = "firstName=" + encodeURIComponent(firstName) + "&lastName=" + encodeURIComponent(lastName) + "&email=" + encodeURIComponent(email) + "&username=" + encodeURIComponent(username) + "&password=" + encodeURIComponent(password);
+
 	// Send data to the backend or API
-	xhr.send(
-		JSON.stringify({
-			firstName: firstName,
-			lastName: lastName,
-			email: email,
-			username: username,
-			password: password,
-		})
-	);
+	xhr.send(formData);
 }
 
 // Add event listener to the form submit button
 document.getElementById("registrationForm").addEventListener("submit", submitRegistration);
-
-// TODO add functions to check and validate user input

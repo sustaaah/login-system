@@ -1,11 +1,9 @@
 <?php
 // TODO insert error code
 require('config.php');
-require('mailer.php');
-// TODO insert db variables from config.php
 
 try {
-	$conn = new PDO("mysql:host=$req_dbhostname;dbname=$req_dbname", $username, $password);
+	$conn = new PDO("mysql:host=$req_dbhostname;dbname=$req_dbname", $req_dbusername, $req_dbpassword);
 	// Set the attribute to report errors
 	$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $e) {
@@ -13,21 +11,18 @@ try {
 }
 
 // User input data
-$name = $_POST['nome']; // User's first name
-$surname = $_POST['cognome']; // User's last name
+$name = $_POST['firstName']; // User's first name
+$surname = $_POST['lastName']; // User's last name
 $email = $_POST['email']; // Email of the account to register
 $username = $_POST['username']; // Username of the account to register
 $password = $_POST['password']; // Password of the account to register
 
 // Sanitize and validate user input
-// TODO validate name with regex
-$regexName = "/^[A-Za-z]+$/";
-$name = filter_var($name, FILTER_SANITIZE_STRING);
+$regexName = "/^[A-Za-z\s]+$/";
+$name = trim($name);
 if (empty($name) || !preg_match($regexName, $name)) {
-	die("Error: First name is missing.");
+	die("Error: First name is missing or invalid.");
 }
-
-// TODO validate surname with regex
 $surname = filter_var($surname, FILTER_SANITIZE_STRING);
 if (empty($surname) || !preg_match($regexName, $surname)) {
 	die("Error: Last name is missing.");
@@ -48,6 +43,17 @@ if (!preg_match($regexPassword, $password)) {
 	die("Error: Insert a valid password");
 }
 
+print($name);
+print('<br>');
+print($surname);
+print('<br>');
+print($email);
+print('<br>');
+print($username);
+print('<br>');
+print($password);
+print('<br>');
+
 // Check if the account already exists in the database
 $query = "SELECT * FROM users WHERE email = :email OR username = :username";
 $stmt = $conn->prepare($query);
@@ -61,10 +67,9 @@ if ($result) {
 	die("Error: Account already exists.");
 } else {
 	// Register the new account in the database
-	// TODO insert all the records
 	$query = "INSERT INTO users (uniq_id, name, surname, email, username, password, tfa_active, account_active, flagged_to, confirm_code, last_login, last_password_change, login_attempt, registration_date) VALUES (:userUniqId, :name, :surname, :email, :username, :password, :tfaActive, :accountActive,:flaggedTo, :confirmCode, :lastLogin, :lastPasswordChange, :loginAttempt, :registration_date)";
 	$stmt = $conn->prepare($query);
-
+	
 	// prepare variables
 	$userUniqId = sha1($username . uniqid());
 	$confirmCode = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
@@ -95,19 +100,16 @@ if ($result) {
 	$stmt->bindParam(":loginAttempt", $loginAttempt);
 	$stmt->bindParam(":registration_date", $timestamp);
 	
-
-
+	
+	
 	$stmt->execute();
-	// 
-	// TODO finish the script
-	// 
 
 	//////////////////////////////////////////////////////////////
-
+	
 	// TODO set the account as 'flagged' or 'blocked' as soon as the email is confirmed
 	// TODO redirect to verify.html page
-
-
+	
+	
 	//
 	// array params for account confirmation and activation
 	// 1: template name
@@ -116,18 +118,17 @@ if ($result) {
 	// 4: email address
 	// 5: confirmation code
 	//
-	$mailerParams = array("template" => "confirmRegistration", "name" => $name, "surname" => $surname, "email" => $email, "confirmationCode" => $confirmationCode);
-	mailer($mailerParams);
-
+	$params = array("template" => "accountConfirmation", "name" => $name, "surname" => $surname, "email" => $email, "confirmationCode" => $confirmCode);
+	require('mailer.php');
 	
-
-
-
+	
+	
+	
+	
 	//////////////////////////////////////////////////////////////
 	$status = "success";
 }
 
-// TODO create a json response for js
 echo json_encode(array("status" => $status));
 
 
