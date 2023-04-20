@@ -31,7 +31,7 @@ if (isset($params['template'])) {
 		$mail->SMTPAuth = true;
 		$mail->Username = $req_smtp_username;
 		$mail->Password = $req_smtp_password;
-		$mail->SMTPSecure = 'tls';
+		$mail->SMTPSecure = $req_smtp_secure;
 		$mail->Port = $req_smtp_port;
 
 		$mail->setFrom($req_smtp_from_mail, $req_smtp_from_name);
