@@ -17,31 +17,42 @@ $email = $_POST['email']; // Email of the account to register
 $username = $_POST['username']; // Username of the account to register
 $password = $_POST['password']; // Password of the account to register
 
+$validationName = $validationSurname = $validationEmail = $validationUsername = $validationPassword = 0;
+
 // Sanitize and validate user input
-$regexName = "/^[A-Za-z\s]+$/";
+$regexName = "/^([A-Z][a-z]+\s)?[A-Z][a-z]+$/";
 $name = trim($name);
 if (empty($name) || !preg_match($regexName, $name)) {
+	$validationName = 1;
 	die("Error: First name is missing or invalid.");
 }
 $surname = filter_var($surname, FILTER_SANITIZE_STRING);
 if (empty($surname) || !preg_match($regexName, $surname)) {
+	$validationSurname = 1;
 	die("Error: Last name is missing.");
 }
 
 $email = filter_var($email, FILTER_SANITIZE_EMAIL);
 if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+	$validationEmail = 1;
 	die("Error: Invalid email.");
 }
 
 $username = filter_var($username, FILTER_SANITIZE_STRING);
 if (empty($username)) {
+	$validationUsername = 1;
 	die("Error: Username is missing.");
 }
 
 $regexPassword = "/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#\$!€()\-])(?=.*[^\s])[\S]{8,32}$/";
 if (!preg_match($regexPassword, $password)) {
+	$validationPassword = 1;
 	die("Error: Insert a valid password");
 }
+
+// TODO check if validation has error
+$validationCheck = $validationName + $validationSurname + $validationEmail + $validationUsername + $validationPassword
+if ()
 
 // Check if the account already exists in the database
 $query = "SELECT * FROM users WHERE email = :email OR username = :username";
