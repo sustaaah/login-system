@@ -51,83 +51,81 @@ if (!preg_match($regexPassword, $password)) {
 }
 
 // TODO check if validation has error
-$validationCheck = $validationName + $validationSurname + $validationEmail + $validationUsername + $validationPassword
-if ()
-
-// Check if the account already exists in the database
-$query = "SELECT * FROM users WHERE email = :email OR username = :username";
-$stmt = $conn->prepare($query);
-$stmt->bindParam(":email", $email);
-$stmt->bindParam(":username", $username);
-$stmt->execute();
-$result = $stmt->fetch(PDO::FETCH_ASSOC);
-
-if ($result) {
-	// Account already exists
-	die("Error: Account already exists.");
-} else {
-	// Register the new account in the database
-	$query = "INSERT INTO users (uniq_id, name, surname, email, username, password, tfa_active, account_active, flagged_to, confirm_code, last_login, last_password_change, login_attempt, registration_date) VALUES (:userUniqId, :name, :surname, :email, :username, :password, :tfaActive, :accountActive,:flaggedTo, :confirmCode, :lastLogin, :lastPasswordChange, :loginAttempt, :registration_date)";
-	$stmt = $conn->prepare($query);
+$validationCheck = $validationName + $validationSurname + $validationEmail + $validationUsername + $validationPassword;
+if ($validationCheck != 0) {
 	
-	// prepare variables
-	$userUniqId = sha1($username . uniqid());
-	$confirmCode = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
-	$lastPasswordChange = "null";
-	$timestamp = time();
-	$loginAttempt = 0;
-	$tfaActive = 0;
-	$loginAttempt = 0;
-	$flaggedTo = "null";
-	$loginAttempt = 0;
-	$accountActive = 0;
-	// Hash the password before inserting it into the database
-	$hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-
-	// bind params //
-	$stmt->bindParam(":userUniqId", $userUniqId);
-	$stmt->bindParam(":name", $name);
-	$stmt->bindParam(":surname", $surname);
+}
+elseif ($validationCheck == 0) {
+	// Check if the account already exists in the database
+	$query = "SELECT * FROM users WHERE email = :email OR username = :username";
+	$stmt = $conn->prepare($query);
 	$stmt->bindParam(":email", $email);
 	$stmt->bindParam(":username", $username);
-	$stmt->bindParam(":password", $hashedPassword);
-	$stmt->bindParam(":tfaActive", $tfaActive);
-	$stmt->bindParam(":accountActive", $accountActive);
-	$stmt->bindParam(":flaggedTo", $flaggedTo);
-	$stmt->bindParam(":confirmCode", $confirmCode);
-	$stmt->bindParam(":lastLogin", $timestamp);
-	$stmt->bindParam(":lastPasswordChange", $timestamp);
-	$stmt->bindParam(":loginAttempt", $loginAttempt);
-	$stmt->bindParam(":registration_date", $timestamp);
-	
 	$stmt->execute();
+	$result = $stmt->fetch(PDO::FETCH_ASSOC);
+	
+	if ($result) {
+		// Account already exists
+		die("Error: Account already exists.");
+	} else {
+		// Register the new account in the database
+		$query = "INSERT INTO users (uniq_id, name, surname, email, username, password, tfa_active, account_active, flagged_to, confirm_code, last_login, last_password_change, login_attempt, registration_date) VALUES (:userUniqId, :name, :surname, :email, :username, :password, :tfaActive, :accountActive,:flaggedTo, :confirmCode, :lastLogin, :lastPasswordChange, :loginAttempt, :registration_date)";
+		$stmt = $conn->prepare($query);
+		
+		// prepare variables
+		$userUniqId = sha1($username . uniqid());
+		$confirmCode = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+		$lastPasswordChange = "null";
+		$timestamp = time();
+		$loginAttempt = 0;
+		$tfaActive = 0;
+		$loginAttempt = 0;
+		$flaggedTo = "null";
+		$loginAttempt = 0;
+		$accountActive = 0;
+		// Hash the password before inserting it into the database
+		$hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+	
+		// bind params //
+		$stmt->bindParam(":userUniqId", $userUniqId);
+		$stmt->bindParam(":name", $name);
+		$stmt->bindParam(":surname", $surname);
+		$stmt->bindParam(":email", $email);
+		$stmt->bindParam(":username", $username);
+		$stmt->bindParam(":password", $hashedPassword);
+		$stmt->bindParam(":tfaActive", $tfaActive);
+		$stmt->bindParam(":accountActive", $accountActive);
+		$stmt->bindParam(":flaggedTo", $flaggedTo);
+		$stmt->bindParam(":confirmCode", $confirmCode);
+		$stmt->bindParam(":lastLogin", $timestamp);
+		$stmt->bindParam(":lastPasswordChange", $timestamp);
+		$stmt->bindParam(":loginAttempt", $loginAttempt);
+		$stmt->bindParam(":registration_date", $timestamp);
+		
+		$stmt->execute();
+	
+		//////////////////////////////////////////////////////////////
+		
+		// TODO set the account as 'flagged' or 'blocked' as soon as the email is confirmed
+		// TODO redirect to verify.html page
+		//
+		// array params for account confirmation and activation
+		// 1: template name
+		// 2: name
+		// 3: surname
+		// 4: email address
+		// 5: confirmation code
+		//
+		$params = array("template" => "accountConfirmation", "name" => $name, "surname" => $surname, "email" => $email, "confirmationCode" => $confirmCode);
+		require('mailer.php');
+		//////////////////////////////////////////////////////////////
+		$status = "success";
+	}
+	
+	echo json_encode(array("status" => $status));
 
-	//////////////////////////////////////////////////////////////
-	
-	// TODO set the account as 'flagged' or 'blocked' as soon as the email is confirmed
-	// TODO redirect to verify.html page
-	
-	
-	//
-	// array params for account confirmation and activation
-	// 1: template name
-	// 2: name
-	// 3: surname
-	// 4: email address
-	// 5: confirmation code
-	//
-	$params = array("template" => "accountConfirmation", "name" => $name, "surname" => $surname, "email" => $email, "confirmationCode" => $confirmCode);
-	require('mailer.php');
-	
-	
-	
-	
-	
-	//////////////////////////////////////////////////////////////
-	$status = "success";
 }
 
-echo json_encode(array("status" => $status));
 
 
 ?>
