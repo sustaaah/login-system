@@ -124,6 +124,7 @@ elseif ($validationCheck == 0) {
 
 	// TODO insert session data
 	// setup session
+	session_start();
 	
 	
 	echo json_encode(array("status" => $status));
