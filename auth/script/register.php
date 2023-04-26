@@ -124,10 +124,8 @@ elseif ($validationCheck == 0) {
 
 	// TODO insert session data
 	// setup session
-	session_start();
-	session_name(); // TODO insert variable
-	$_SESSION['']
-	
+	require('loginScript.php');
+	login();
 	echo json_encode(array("status" => $status));
 
 }
