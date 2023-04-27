@@ -1,8 +1,9 @@
 <?php
 function login($uniqIdUser){
 	require('config.php');
-	session_start();
+	session_set_cookie_params($expire, '/', $domain, true, true); // TODO insert variable
 	session_name($req_session_name);
+	session_start();
 
 	// Connessione al database
 	try {
@@ -11,19 +12,24 @@ function login($uniqIdUser){
 		$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 		// Query SQL con prepared statement
-		$sql = "INSERT INTO utenti (nome, cognome) VALUES (:nome, :cognome)";
+		$sql = "INSERT INTO session (sessionUniqId, user, userAgent, ip, userUniqId, loginTime, expireTime, lastActivity, isValid) VALUES (:sessionUniqId, :user, :userAgent, :ip, :userUniqId, :loginTime, :expireTime, :lastActivity, :isValid)";
 		$stmt = $conn->prepare($sql);
 
 		// Impostiamo i valori dei parametri
-		$nome = "Mario";
-		$cognome = "Rossi";
-		$stmt->bindParam(':nome', $nome);
-		$stmt->bindParam(':cognome', $cognome);
-
+		$stmt->bindParam(':sessionUniqId', $);
+		$stmt->bindParam(':user', $);
+		$stmt->bindParam(':userAgent', $);
+		$stmt->bindParam(':ip', $);
+		$stmt->bindParam(':userUniqId', $);
+		$stmt->bindParam(':loginTime', $);
+		$stmt->bindParam(':expireTime', $);
+		$stmt->bindParam(':lastActivity', $);
+		$stmt->bindParam(':isValid', $);
+		
 		// Esecuzione della query
 		$stmt->execute();
 
-		echo "Nuovo utente inserito con successo";
+		$_SESSION['userUniqId'] = $uniqIdUser;
 	} catch (PDOException $e) {
 		echo "Errore durante l'inserimento dell'utente: " . $e->getMessage();
 	}
