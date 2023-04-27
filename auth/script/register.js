@@ -11,7 +11,7 @@ function submitRegistration(event) {
 	var confirmPassword = document.getElementById("inputConfirmPassword").value;
 
 	// Regex pattern for valid first name and last name
-	var nameRegex = //;
+	var nameRegex = /^([A-Z][a-z]+\s)?[A-Z][a-z]+$/;
 
 	// Validate first name
 	if (!firstName.match(nameRegex)) {
