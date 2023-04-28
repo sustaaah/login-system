@@ -2,31 +2,53 @@
 require('config.php');
 session_start();
 
-$mail = $_POST['mail'];
+$mail = $_POST['username'];
 $password = $_POST['password'];
 
-// databse pdo connection with prepared statement
-$conn = new PDO("mysql:host=$req_dbhostname;dbname=$req_dbname", $username, $password);
-$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-$conn->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-$conn->query("SET NAMES 'utf8'");
+// Prendi l'input dell'username e della password dall'utente
+$username = filter_input(INPUT_POST, 'username', FILTER_SANITIZE_STRING);
+$password = $_POST['password'];
 
+// Verifica che l'input dell'username non sia vuoto
+if (empty($username)) {
+  echo "Inserisci un nome utente valido.";
+} else {
+  // Connessione al database
+  $dsn = "mysql:host=$req_dbhostname;dbname=$req_dbname";
+  $options = array(
+    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+  );
 
-// try catch for pdo error
-try {
-	$stmt = $conn->prepare("SELECT * FROM users WHERE mail =?");
-	$stmt->bindParam(1, $mail);
-	$stmt->execute();
-	$result = $stmt->fetch(PDO::FETCH_ASSOC);
+  try {
+    $pdo = new PDO($dsn, $req_dbusername, $req_dbpassword, $options);
+  } catch (PDOException $e) {
+    echo "Connessione al database fallita: " . $e->getMessage();
+    die();
+  }
+
+  // Query per selezionare l'utente dal database
+  $stmt = $pdo->prepare("SELECT * FROM users WHERE username = :username");
+  $stmt->execute(array(':username' => $username));
+  $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+  // Verifica che l'utente esista e che la password sia corretta
+  if (!$user || !password_verify($password, $user['password'])) {
+    echo "Nome utente o password non validi.";
+  } else {
+    // Richiama la funzione per l'accesso
+    accessoUtente($user);
+  }
 }
-catch (PDOException $e) {
-	$conn = null;
+
+// Funzione per l'accesso dell'utente
+function accessoUtente($user) {
+  // Esegui il login dell'utente e mostra la pagina dell'account
+  echo "Benvenuto, " . $user['username'] . "!";
+  // ...
 }
 
-// close db pdo connection
+?>
 
-
-$conn = null;
 
 
 ?>

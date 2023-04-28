@@ -49,7 +49,7 @@ function login($uniqUserId, $username)
 		// Esecuzione della query
 		$stmt->execute();
 	} catch (PDOException $e) {
-		echo "Errore durante l'inserimento dell'utente: " . $e->getMessage();
+		die("Errore durante l'inserimento dell'utente: " . $e->getMessage());
 	}
 
 	$_SESSION['userUniqId'] = $uniqIdUser;

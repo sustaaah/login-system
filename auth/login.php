@@ -8,6 +8,16 @@
 </head>
 <body>
 
+<form>
+<div>Username</div>
+<input name="username" id="username" type="text"/>
+<div>Password</div>
+<input name="password" id="password" type="password" />
+<input type="submit" value="login"/>
+
+</form>
+
+
 
 
 </body>

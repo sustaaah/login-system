@@ -51,7 +51,7 @@ function submitRegistration(event) {
 
 	// Create an XMLHttpRequest object
 	var xhr = new XMLHttpRequest();
-	xhr.open("POST", "script/register.php", true);
+	xhr.open("POST", "script/registerScript.php", true);
 	xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
 
 	// Handle the backend or API response

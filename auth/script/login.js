@@ -28,7 +28,7 @@ function login() {
 	//ajax request to login.php
 	// (A) GET FORM DATA
 	var data = new FormData();
-	data.append("name", document.getElementById("user-name").value);
+	data.append("", document.getElementById("user-name").value);
 	data.append("email", document.getElementById("user-email").value);
 
 	// (B) AJAX
