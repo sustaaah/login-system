@@ -139,7 +139,7 @@ elseif ($validationCheck == 0) {
 
 	// TODO insert session data
 	// setup session
-	require('loginScript.php');
+	require('sessionConstructor.php');
 	login($userUniqId, $username);
 	echo json_encode(array("status" => $status));
 

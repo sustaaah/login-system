@@ -33,7 +33,7 @@ function login() {
 
 	// (B) AJAX
 	var xhr = new XMLHttpRequest();
-	xhr.open("POST", "login.php");
+	xhr.open("POST", "loginScript.php");
 	// What to do when server responds
 	xhr.onload = function () {
 		console.log(this.response);
