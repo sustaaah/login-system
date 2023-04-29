@@ -54,6 +54,21 @@ if (!preg_match($regexPassword, $password)) {
 $validationCheck = $validationName + $validationSurname + $validationEmail + $validationUsername + $validationPassword;
 if ($validationCheck != 0) {
 	// TODO insert error gateaway
+	if ($validationName != 1){
+
+	}
+	if ($validationSurname != 1){
+	
+	}
+	if ($validationUsername != 1){
+
+	}
+	if ($validationPassword != 1){
+
+	}
+	if ($validationEmail != 1) {
+
+	}
 }
 elseif ($validationCheck == 0) {
 	// Check if the account already exists in the database
@@ -125,9 +140,11 @@ elseif ($validationCheck == 0) {
 	// TODO insert session data
 	// setup session
 	require('loginScript.php');
-	login();
+	login($userUniqId, $username);
 	echo json_encode(array("status" => $status));
 
 }
-
+else{
+	// TODO responde as server error
+}
 ?>
