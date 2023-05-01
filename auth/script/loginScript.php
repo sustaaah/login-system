@@ -1,8 +1,21 @@
 <?php
 require('config.php');
-session_start();
 
-// Prendi l'input dell'username e della password dall'utente
+$data = array(
+            'secret' => "my-secret (should start with 0x..)", // TODO insert variables from config.php
+            'response' => $_POST['h-captcha-response']
+        );
+$verify = curl_init();
+curl_setopt($verify, CURLOPT_URL, "https://hcaptcha.com/siteverify");
+curl_setopt($verify, CURLOPT_POST, true);
+curl_setopt($verify, CURLOPT_POSTFIELDS, http_build_query($data));
+curl_setopt($verify, CURLOPT_RETURNTRANSFER, true);
+$response = curl_exec($verify);
+// var_dump($response);
+$responseData = json_decode($response);
+
+if($responseData->success) {
+    // Prendi l'input dell'username e della password dall'utente
 $username = filter_input(INPUT_POST, 'username', FILTER_SANITIZE_STRING);
 $password = $_POST['password'];
 
@@ -37,4 +50,9 @@ if (empty($username)) {
 		echo "Nome utente o password non validi.";
 	}
 }
+} 
+else {
+   // return error to user; they did not pass
+}
+
 ?>
