@@ -9,7 +9,7 @@ function checkLogin()
 		$userUniqId = $_SESSION['userUnuqId'];
 
 		try {
-			$conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
+			$conn = new PDO("mysql:host=$req_dbhostname;dbname=$req_dbname", $req_dbusername, $req_dbpassword);
 			$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 			// Query con prepared statement e clausola WHERE

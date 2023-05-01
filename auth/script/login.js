@@ -1,7 +1,7 @@
 function checkUsername() {
 	// regex to check if username is valid
 	var regex = /^[a-zA-Z0-9]+$/;
-	var username = document.getElementById("user-name").value;
+	var username = document.getElementById("username").value;
 	if (regex.test(username)) {
 		return true;
 	} else {
@@ -24,16 +24,19 @@ function checkPassword(element) {
 
 function login() {
 	// TODO implement errors code
-	// TODO finish script
 	//ajax request to login.php
 	// (A) GET FORM DATA
 	var data = new FormData();
-	data.append("", document.getElementById("user-name").value);
-	data.append("email", document.getElementById("user-email").value);
+	var hCaptchaResponse = document.getElementsByName('h-captcha-response');
+
+	data.append("username", document.getElementById("username").value);
+	data.append("password", document.getElementById("password").value);
+	data.append("captchaResponse", hCaptchaResponse[0].value);
+
 
 	// (B) AJAX
 	var xhr = new XMLHttpRequest();
-	xhr.open("POST", "loginScript.php");
+	xhr.open("POST", "script/loginScript.php");
 	// What to do when server responds
 	xhr.onload = function () {
 		console.log(this.response);

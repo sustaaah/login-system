@@ -28,10 +28,11 @@
 
 		<label for="confirmPassword">Confirm Password:</label>
 		<input type="password" id="inputConfirmPassword" name="confirmPassword" required><br>
+		<div class="h-captcha" data-sitekey="e47a8603-8cf8-4d65-bae2-e8f831885212"></div>
 
 		<input type="submit" value="Submit">
 	</form>
 	<script src="script/register.js"></script>
+	<script src="https://js.hcaptcha.com/1/api.js" async defer></script>
 </body>
-
 </html>

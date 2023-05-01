@@ -7,15 +7,17 @@
 </head>
 <body>
 	<h1>Log in to your account</h1>
-	<form>
+	<form onsubmit="return login()">
 		<label for="username">Username:</label>
 		<input type="text" id="username" name="username" required>
 		<br><br>
 		<label for="password">Password:</label>
 		<input type="password" id="password" name="password" required>
+		<div class="h-captcha" data-sitekey="e47a8603-8cf8-4d65-bae2-e8f831885212"></div>
 		<br><br>
 		<input type="submit" value="Sing in">
 	</form>
+	<script src="script/login.js"></script>
+	<script src="https://js.hcaptcha.com/1/api.js" async defer></script>
 </body>
-<script src="script/login.js"></script>
 </html>

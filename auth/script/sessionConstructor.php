@@ -8,8 +8,8 @@ function login($uniqUserId, $username)
 	ini_set('session.use_strict_mode', 1);
 	session_set_cookie_params([
 		'lifetime' => $req_session_cookie_expire,
-		'path' => '/',
-		'domain' => $req_domain,
+		'path' => $req_session_path,
+		'domain' => $req_session_domain,
 		'secure' => true,
 		'httponly' => true,
 		'samesite' => 'Lax'
