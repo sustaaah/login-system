@@ -39,7 +39,13 @@ function login() {
 	xhr.open("POST", "script/loginScript.php");
 	// What to do when server responds
 	xhr.onload = function () {
-		console.log(this.response);
+		response = JSON.parse(this.response);
+
+		if (response.status == "success"){
+			
+		}
+		// TODO elaborate response
+		
 	};
 	xhr.send(data);
 	// catch errors

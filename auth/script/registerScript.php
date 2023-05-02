@@ -152,13 +152,15 @@ if ($responseData->success) {
 		// setup session
 		require('sessionConstructor.php');
 		login($userUniqId, $username);
-		echo json_encode(array("status" => $status));
 
 	} else {
 		// TODO responde as server error
+		$status = 'error';
 	}
 } else {
 	// return error to user; they did not pass
+	$status = 'error';
 }
 
+echo json_encode(array("status" => $status));
 ?>

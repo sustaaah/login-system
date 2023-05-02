@@ -57,7 +57,7 @@ function submitRegistration(event) {
 	// Handle the backend or API response
 	xhr.onload = function () {
 		if (xhr.status >= 200 && xhr.status < 400) {
-			console.log(xhr.responseText); // Perform actions after successful registration
+			response = JSON.parse(xhr.responseText); // Perform actions after successful registration
 		} else {
 			console.error(xhr.statusText); // Handle any errors
 		}
