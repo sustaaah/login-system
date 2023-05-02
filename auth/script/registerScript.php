@@ -62,12 +62,11 @@ if ($responseData->success) {
 		die("Error: Insert a valid password");
 	}
 
-	// TODO check if validation has error
 	$validationCheck = $validationName + $validationSurname + $validationEmail + $validationUsername + $validationPassword;
 	if ($validationCheck != 0) {
 		// TODO insert error gateaway
 		if ($validationName != 1) {
-
+			
 		}
 		if ($validationSurname != 1) {
 

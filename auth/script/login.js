@@ -23,7 +23,6 @@ function checkPassword(element) {
 }
 
 function login() {
-	// TODO implement errors code
 	//ajax request to login.php
 	// (A) GET FORM DATA
 	var data = new FormData();
@@ -39,10 +38,19 @@ function login() {
 	xhr.open("POST", "script/loginScript.php");
 	// What to do when server responds
 	xhr.onload = function () {
-		response = JSON.parse(this.response);
+		var response = JSON.parse(this.response);
 
 		if (response.status == "success"){
-			
+			// login success
+		}
+		else if(response.status == "error"){
+			// login error
+			var errorArray = response.error;
+
+			errorArray.forEach(function (value) {
+				console.log(value);
+			});
+
 		}
 		// TODO elaborate response
 		

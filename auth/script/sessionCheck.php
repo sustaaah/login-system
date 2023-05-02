@@ -22,11 +22,11 @@ function checkLogin()
 			// Elaborazione del risultato
 			$row = $stmt->fetch(PDO::FETCH_ASSOC);
 			if ($row) {
-				// check last action
+				// TODO check last action
 
-				// check if the session is expired
+				// TODO check if the session is expired
 
-				// check if session is still valid
+				// TODO check if session is still valid
 
 				
 				
@@ -54,10 +54,6 @@ function checkLogin()
 	
 	// Chiusura della connessione
 	$conn = null;
-	// todo check if last action is allowed
-	// todo check if login is still valid
-	// todo check if userAgent and ip are valid
-
 }
 
 function generateCsrfToken()
