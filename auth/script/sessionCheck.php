@@ -9,51 +9,69 @@ function checkLogin()
 		$userUniqId = $_SESSION['userUnuqId'];
 
 		try {
-			$conn = new PDO("mysql:host=$req_dbhostname;dbname=$req_dbname", $req_dbusername, $req_dbpassword);
-			$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+			$sessionDbConnection = new PDO("mysql:host=$req_dbhostname;dbname=$req_dbname", $req_dbusername, $req_dbpassword);
+			$sessionDbConnection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 			// Query con prepared statement e clausola WHERE
-			$stmt = $conn->prepare("SELECT * FROM users WHERE sessionUniqId = :sessionUniqId");
-			$stmt->bindParam(':sessionUniqId', $sessionUniqId);
+			$smtpSessionDbConnection = $sessionDbConnection->prepare("SELECT * FROM users WHERE sessionUniqId = :sessionUniqId");
+			$smtpSessionDbConnection->bindParam(':sessionUniqId', $sessionUniqId);
 
 			// Esecuzione della query con il valore del parametro
-			$stmt->execute();
+			$smtpSessionDbConnection->execute();
+
+			// Controllo del numero di risultati
+			$row_count = $smtpSessionDbConnection->rowCount();
+			if ($row_count !== 1) {
+				// TODO create a errorlog.txt file to save the error
+				throw new Exception("La query ha trovato più di una riga");
+			}
 
 			// Elaborazione del risultato
-			$row = $stmt->fetch(PDO::FETCH_ASSOC);
+			$row = $smtpSessionDbConnection->fetch(PDO::FETCH_ASSOC);
 			if ($row) {
-				// TODO check last action
+				$sessionError = 0;
 
-				// TODO check if the session is expired
+				if (intval($row['loginTime']) + $req_inactivity_session_time < time()) {
+					// error: inactivity
+					$sessionError += 1;
+				}
 
-				// TODO check if session is still valid
+				if (intval($row['loginTime']) + $req_session_expire < time()) {
+					// error: session expired
+					$sessionError += 1;
 
-				
-				
-				
-				
-				
-				echo "ID: " . $row["id"] . " - Nome: " . $row["nome"] . " - Cognome: " . $row["cognome"] . "<br>";
-			
-			
-			
+				}
+
+				if (intval($row['isValid']) !== 1) {
+					// error: invalid session
+					$sessionError += 1;
+
+				}
+
+				$userAgent = filter_var($_SERVER['HTTP_USER_AGENT'], FILTER_SANITIZE_STRING);
+				if ($userAgent !== $row['userAgent']) {
+					// error: different user agent
+					$sessionError += 1;
+				}
+
+				if ($sessionError !== 0) {
+					// todo destroy and close session
+
+				}
 			} else {
 				echo "Nessun risultato.";
 			}
-		}
-		catch (PDOException $e) {
-			echo "Errore di connessione al database: " . $e->getMessage();
+		} catch (PDOException $e) {
+			echo "Errore di sessionDbConnectionessione al database: " . $e->getMessage();
+		} catch (Exception $e) {
+			echo "Errore nella query: " . $e->getMessage();
 		}
 
-		
-		
+		// Chiusura della sessionDbConnectionessione
+		$sessionDbConnection = null;
 	} else {
 		session_destroy();
-		
 	}
-	
-	// Chiusura della connessione
-	$conn = null;
 }
 
 function generateCsrfToken()

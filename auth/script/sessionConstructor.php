@@ -24,14 +24,13 @@ function login($uniqUserId, $username)
 		$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 		// Query SQL con prepared statement
-		$sql = "INSERT INTO session (sessionUniqId, user, userAgent, ip, userUniqId, loginTime, expireTime, lastActivity, isValid) VALUES (:sessionUniqId, :user, :userAgent, :ip, :userUniqId, :loginTime, :expireTime, :lastActivity, :isValid)";
+		$sql = "INSERT INTO session (sessionUniqId, user, userAgent, ip, userUniqId, loginTime, lastActivity, isValid) VALUES (:sessionUniqId, :user, :userAgent, :ip, :userUniqId, :loginTime, :lastActivity, :isValid)";
 		$stmt = $conn->prepare($sql);
 
 		$ip = filter_var($_SERVER['REMOTE_ADDR'], FILTER_VALIDATE_IP);
 		$sessionUniqId = sha1(bin2hex(random_bytes(32)) . $ip . $uniqUserId);
 		$userAgent = filter_var($_SERVER['HTTP_USER_AGENT'], FILTER_SANITIZE_STRING);
 		$loginTime = time();
-		$expireTime = $loginTime + $req_session_expire;
 		$lastActivity = time();
 		$isValid = 1;
 
@@ -42,7 +41,6 @@ function login($uniqUserId, $username)
 		$stmt->bindParam(':ip', $ip);
 		$stmt->bindParam(':userUniqId', $uniqUserId);
 		$stmt->bindParam(':loginTime', $loginTime);
-		$stmt->bindParam(':expireTime', $expireTime);
 		$stmt->bindParam(':lastActivity', $lastActivity);
 		$stmt->bindParam(':isValid', $isValid);
 
