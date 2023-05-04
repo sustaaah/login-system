@@ -9,6 +9,7 @@ function submitRegistration(event) {
 	var username = document.getElementById("inputUsername").value;
 	var password = document.getElementById("inputPassword").value;
 	var confirmPassword = document.getElementById("inputConfirmPassword").value;
+	var hCaptchaResponse = document.getElementsByName("h-captcha-response");
 
 	// Regex pattern for valid first name and last name
 	var nameRegex = /^([A-Z][a-z]+\s)?[A-Z][a-z]+$/;
@@ -69,7 +70,7 @@ function submitRegistration(event) {
 	};
 
 	// Convert form data to URL-encoded format
-	var formData = "firstName=" + encodeURIComponent(firstName) + "&lastName=" + encodeURIComponent(lastName) + "&email=" + encodeURIComponent(email) + "&username=" + encodeURIComponent(username) + "&password=" + encodeURIComponent(password);
+	var formData = "firstName=" + encodeURIComponent(firstName) + "&lastName=" + encodeURIComponent(lastName) + "&email=" + encodeURIComponent(email) + "&username=" + encodeURIComponent(username) + "&password=" + encodeURIComponent(password) + "&h-captcha-response=" + encodeURIComponent(hCaptchaResponse[0].value);
 
 	// Send data to the backend or API
 	xhr.send(formData);

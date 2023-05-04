@@ -9,66 +9,112 @@ function checkLogin()
 		$userUniqId = $_SESSION['userUnuqId'];
 
 		try {
-			$sessionDbConnection = new PDO("mysql:host=$req_dbhostname;dbname=$req_dbname", $req_dbusername, $req_dbpassword);
-			$sessionDbConnection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+			$sessionDbuserDbConnectionection = new PDO("mysql:host=$req_dbhostname;dbname=$req_dbname", $req_dbusername, $req_dbpassword);
+			$sessionDbuserDbConnectionection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 			// Query con prepared statement e clausola WHERE
-			$smtpSessionDbConnection = $sessionDbConnection->prepare("SELECT * FROM users WHERE sessionUniqId = :sessionUniqId");
-			$smtpSessionDbConnection->bindParam(':sessionUniqId', $sessionUniqId);
+			$smtpSessionDbuserDbConnectionection = $sessionDbuserDbConnectionection->prepare("SELECT * FROM users WHERE sessionUniqId = :sessionUniqId");
+			$smtpSessionDbuserDbConnectionection->bindParam(':sessionUniqId', $sessionUniqId);
 
 			// Esecuzione della query con il valore del parametro
-			$smtpSessionDbConnection->execute();
+			$smtpSessionDbuserDbConnectionection->execute();
 
 			// Controllo del numero di risultati
-			$row_count = $smtpSessionDbConnection->rowCount();
-			if ($row_count !== 1) {
+			$resultSessionDbuserDbConnectionection_count = $smtpSessionDbuserDbConnectionection->rowCount();
+			if ($resultSessionDbuserDbConnectionection_count !== 1) {
 				// TODO create a errorlog.txt file to save the error
 				throw new Exception("La query ha trovato più di una riga");
 			}
 
 			// Elaborazione del risultato
-			$row = $smtpSessionDbConnection->fetch(PDO::FETCH_ASSOC);
-			if ($row) {
+			$resultSessionDbuserDbConnectionection = $smtpSessionDbuserDbConnectionection->fetch(PDO::FETCH_ASSOC);
+			if ($resultSessionDbuserDbConnectionection) {
 				$sessionError = 0;
+				$validSession = false;
 
-				if (intval($row['loginTime']) + $req_inactivity_session_time < time()) {
+				if (intval($resultSessionDbuserDbConnectionection['loginTime']) + $req_inactivity_session_time < time()) {
 					// error: inactivity
 					$sessionError += 1;
 				}
 
-				if (intval($row['loginTime']) + $req_session_expire < time()) {
+				if (intval($resultSessionDbuserDbConnectionection['loginTime']) + $req_session_expire < time()) {
 					// error: session expired
 					$sessionError += 1;
 
 				}
 
-				if (intval($row['isValid']) !== 1) {
+				if (intval($resultSessionDbuserDbConnectionection['isValid']) !== 1) {
 					// error: invalid session
 					$sessionError += 1;
 
 				}
 
 				$userAgent = filter_var($_SERVER['HTTP_USER_AGENT'], FILTER_SANITIZE_STRING);
-				if ($userAgent !== $row['userAgent']) {
+				if ($userAgent !== $resultSessionDbuserDbConnectionection['userAgent']) {
 					// error: different user agent
 					$sessionError += 1;
 				}
 
-				if ($sessionError !== 0) {
+				if ($sessionError == 0) {
+					// session valid, check user
+					try {
+						$userDbConnection = new PDO("mysql:host=$req_dbhostname;dbname=$req_dbname", $req_dbusername, $req_dbpassword);
+						$userDbConnection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+						// Query con prepared statement e clausola WHERE
+						$stmtUserDbConnection = $userDbConnection->prepare("SELECT * FROM USERS WHERE uniq_id = :uniq_id");
+						$stmtUserDbConnection->bindParam(':uniq_id', $resultSessionDbuserDbConnectionection['userUniqId']);
+
+						// Esecuzione della query con il valore del parametro id
+						$id = 1;
+						$stmtUserDbConnection->execute();
+
+						// Elaborazione del risultato
+						$rowUserDbConnection = $stmtUserDbConnection->fetch(PDO::FETCH_ASSOC);
+						if ($rowUserDbConnection) {
+
+							// TODO CHECK IF ACCOUNT IS FLAGGED, BLOCKED
+
+						} else {
+							echo "Nessun risultato.";
+						}
+					} catch (PDOException $e) {
+						echo "Errore di userDbConnectionessione al database: " . $e->getMessage();
+					}
+
+					// close connection
+					$userDbConnection = null;
+
+					////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////x
+
+
+
+
+
+
+
+
+
+
+
+				}
+
+				if ($validSession === false) {
 					// todo destroy and close session
 
 				}
+
 			} else {
 				echo "Nessun risultato.";
 			}
 		} catch (PDOException $e) {
-			echo "Errore di sessionDbConnectionessione al database: " . $e->getMessage();
+			echo "Errore di sessionDbuserDbConnectionectionessione al database: " . $e->getMessage();
 		} catch (Exception $e) {
 			echo "Errore nella query: " . $e->getMessage();
 		}
 
-		// Chiusura della sessionDbConnectionessione
-		$sessionDbConnection = null;
+		// Chiusura della sessionDbuserDbConnectionectionessione
+		$sessionDbuserDbConnectionection = null;
 	} else {
 		session_destroy();
 	}
