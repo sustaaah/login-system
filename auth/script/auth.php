@@ -8,7 +8,7 @@ class auth{
 	}
 
 	public function responseAddError($newData){
-		$this
+		
 	}
 
 	public function responseDataPrint(){

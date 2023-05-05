@@ -6,7 +6,9 @@ function checkLogin()
 
 	if (isset($_SESSION['sessionUniqId']) && isset($_SESSION['userUniqId'])) {
 		$sessionUniqId = $_SESSION['sessionUniqId'];
-		$userUniqId = $_SESSION['userUnuqId'];
+		$userUniqId = $_SESSION['userUniqId'];
+		$validSeesion = false;
+		$needRedirect = false;
 
 		try {
 			$sessionDbuserDbConnectionection = new PDO("mysql:host=$req_dbhostname;dbname=$req_dbname", $req_dbusername, $req_dbpassword);
@@ -30,8 +32,7 @@ function checkLogin()
 			$resultSessionDbuserDbConnectionection = $smtpSessionDbuserDbConnectionection->fetch(PDO::FETCH_ASSOC);
 			if ($resultSessionDbuserDbConnectionection) {
 				$sessionError = 0;
-				$validSession = false;
-
+				
 				if (intval($resultSessionDbuserDbConnectionection['loginTime']) + $req_inactivity_session_time < time()) {
 					// error: inactivity
 					$sessionError += 1;
@@ -64,59 +65,78 @@ function checkLogin()
 						// Query con prepared statement e clausola WHERE
 						$stmtUserDbConnection = $userDbConnection->prepare("SELECT * FROM USERS WHERE uniq_id = :uniq_id");
 						$stmtUserDbConnection->bindParam(':uniq_id', $resultSessionDbuserDbConnectionection['userUniqId']);
-
-						// Esecuzione della query con il valore del parametro id
-						$id = 1;
+						
 						$stmtUserDbConnection->execute();
 
 						// Elaborazione del risultato
 						$rowUserDbConnection = $stmtUserDbConnection->fetch(PDO::FETCH_ASSOC);
 						if ($rowUserDbConnection) {
-
-							// TODO CHECK IF ACCOUNT IS FLAGGED, BLOCKED
+							if ($rowUserDbConnection['active'] == 1){
+								// account active
+								if ($rowUserDbConnection['flaggedTo'] == 'null' || $rowUserDbConnection['flaggedTo'] < time()) {
+									// account not flagged
+									// SESSION OK
+									$validSeesion = true;
+								}
+							}
+							else{
+								// account deactivated
+								$validSeesion = false;
+							}
 
 						} else {
-							echo "Nessun risultato.";
+							// can't find and account linked to the session, destroy session
+							echo "can't find an account";
+							$validSeesion = false;
 						}
 					} catch (PDOException $e) {
-						echo "Errore di userDbConnectionessione al database: " . $e->getMessage();
+						// TODO INSERT ERROR IN LOG FILE
+						// echo "Errore di userDbConnectionessione al database: " . $e->getMessage();
+						$validSeesion = false;
 					}
 
 					// close connection
 					$userDbConnection = null;
-
-					////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////x
-
-
-
-
-
-
-
-
-
-
-
 				}
-
-				if ($validSession === false) {
-					// todo destroy and close session
-
-				}
-
 			} else {
-				echo "Nessun risultato.";
+				// error TODO SPECIFY ERROR IN THE COMMENT
+				$validSeesion = false;
 			}
 		} catch (PDOException $e) {
-			echo "Errore di sessionDbuserDbConnectionectionessione al database: " . $e->getMessage();
+			// TODO INSERT ERROR IN LOG FILE
+			// echo "Errore di sessionDbuserDbConnectionectionessione al database: " . $e->getMessage();
+			$validSeesion = false;
 		} catch (Exception $e) {
-			echo "Errore nella query: " . $e->getMessage();
+			// TODO INSERT ERROR IN LOG FILE
+			// echo "Errore nella query: " . $e->getMessage();
+			$validSeesion = false;
 		}
 
 		// Chiusura della sessionDbuserDbConnectionectionessione
 		$sessionDbuserDbConnectionection = null;
+
+		if ($validSession === true){
+			// valid session
+			return true;
+		}
+		else{
+			// session invalid: destroy and close session
+			// TODO redirect to login page with error details
+			
+			$needRedirect = true;
+			
+		}
 	} else {
+		// error: session variables non set, destroy session
+		session_unset();
 		session_destroy();
+
+		$needRedirect = true;
+	}
+
+	if ($needRedirect === true){
+		header("Location: https://" . $req_domain . $req_path . "auth/login.php?e=" . $sessionError);
+		die();
 	}
 }
 
