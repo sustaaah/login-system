@@ -81,12 +81,13 @@ function checkLogin()
 							}
 							else{
 								// account deactivated
+								$sessionError = "deactivated"
 								$validSeesion = false;
 							}
 
 						} else {
 							// can't find and account linked to the session, destroy session
-							echo "can't find an account";
+							$sessionError = "noLinkedAccount";
 							$validSeesion = false;
 						}
 					} catch (PDOException $e) {
@@ -135,6 +136,7 @@ function checkLogin()
 	}
 
 	if ($needRedirect === true){
+		// TODO check variables with config.php
 		header("Location: https://" . $req_domain . $req_path . "auth/login.php?e=" . $sessionError);
 		die();
 	}

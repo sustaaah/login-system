@@ -1,3 +1,28 @@
+<?php
+session_start();
+
+// todo check if is a real session variable
+if(isset($_SESSION['uniqid'])){
+	
+}
+$error = false;
+switch $_GET['sessionError']{
+	case 'expired':
+		$error = "The current session has expired";
+		break;
+
+	case 'inactivity':
+		$error = "The current session was terminated due to inactivity.";
+		break;
+
+	default:
+		$error = false;
+		break;
+}
+
+	
+	
+?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -7,6 +32,12 @@
 </head>
 <body>
 	<h1>Log in to your account</h1>
+	<?php
+if($error !=== false){
+	// TODO print error
+	 
+}
+?>
 	<form onsubmit="return login()">
 		<label for="username">Username:</label>
 		<input type="text" id="username" name="username" required>
