@@ -1,4 +1,5 @@
 <?php
+// TODO insert logError('message error'); function
 
 require 'lib/PHPMailer/Exception.php';
 require 'lib/PHPMailer/PHPMailer.php';
@@ -20,7 +21,9 @@ if (isset($params['template'])) {
 			break;
 
 		default:
-			die('Invalid email template');
+			logError('Invalid email template');
+			die();
+			
 	}
 
 	$mail = new PHPMailer(true);
@@ -41,10 +44,12 @@ if (isset($params['template'])) {
 		$mail->isHTML(true);
 
 		if (!$mail->send()) {
-			die('Unable to send email: ' . $mail->ErrorInfo);
+			logError('Unable to send email: ' . $mail->ErrorInfo);
+			die();
 		}
 		return true;
 	} catch (Exception $e) {
+		  
 		die('Unable to send email: ' . $e->getMessage());
 	}
 } else {

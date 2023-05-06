@@ -1,4 +1,5 @@
 <?php
+// TODO insert logError('message error'); function
 function checkLogin()
 {
 	require('config.php');
@@ -81,7 +82,7 @@ function checkLogin()
 							}
 							else{
 								// account deactivated
-								$sessionError = "deactivated"
+								$sessionError = "deactivated";
 								$validSeesion = false;
 							}
 
@@ -136,8 +137,7 @@ function checkLogin()
 	}
 
 	if ($needRedirect === true){
-		// TODO check variables with config.php
-		header("Location: https://" . $req_domain . $req_path . "auth/login.php?e=" . $sessionError);
+		header("Location: https://" . $req_domain . $req_path_to_login . "auth/login.php?e=" . $sessionError);
 		die();
 	}
 }

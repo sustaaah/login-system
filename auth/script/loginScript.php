@@ -32,7 +32,7 @@ if ($responseData->success) {
 		try {
 			$pdo = new PDO($dsn, $req_dbusername, $req_dbpassword, $options);
 		} catch (PDOException $e) {
-			echo "Connessione al database fallita: " . $e->getMessage();
+			logError($e->getMessage());
 			die();
 		}
 

@@ -1,4 +1,5 @@
 <?php
+// TODO insert logError('message error'); function
 // TODO insert error code
 require('config.php');
 

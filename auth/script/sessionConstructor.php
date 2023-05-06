@@ -1,6 +1,7 @@
 <?php
 function login($uniqUserId, $username)
 {
+
 	require('config.php');
 	ini_set('session.use_cookies', 1);
 	ini_set('session.use_only_cookies', 1);
@@ -47,7 +48,8 @@ function login($uniqUserId, $username)
 		// Esecuzione della query
 		$stmt->execute();
 	} catch (PDOException $e) {
-		die("Errore durante l'inserimento dell'utente: " . $e->getMessage());
+		logError($e->getMessage());
+		die();
 	}
 
 	$_SESSION['userUniqId'] = $uniqIdUser;
