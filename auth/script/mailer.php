@@ -1,6 +1,4 @@
 <?php
-// TODO insert logError('message error'); function
-
 require 'lib/PHPMailer/Exception.php';
 require 'lib/PHPMailer/PHPMailer.php';
 require 'lib/PHPMailer/SMTP.php';
@@ -49,9 +47,10 @@ if (isset($params['template'])) {
 		}
 		return true;
 	} catch (Exception $e) {
-		  
-		die('Unable to send email: ' . $e->getMessage());
+		logError('Unable to send email: ' . $e->getMessage());
+		die();
 	}
 } else {
-	die('Email template not set');
+	logError('Email template not set');
+	die();
 }

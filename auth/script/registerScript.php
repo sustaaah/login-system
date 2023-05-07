@@ -1,6 +1,4 @@
 <?php
-// TODO insert logError('message error'); function
-// TODO insert error code
 require('config.php');
 
 $data = array(
@@ -22,7 +20,8 @@ if ($responseData->success) {
 		// Set the attribute to report errors
 		$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 	} catch (PDOException $e) {
-		die("Failed to connect to the database: " . $e->getMessage());
+		logError("Failed to connect to the database: " . $e->getMessage());
+		die();
 	}
 
 	// User input data
@@ -157,7 +156,7 @@ if ($responseData->success) {
 		// TODO redirect to verify.php page
 
 	} else {
-		// TODO responde as server error
+		logError('logical error');
 		$status = 'error';
 	}
 } else {

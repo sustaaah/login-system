@@ -1,5 +1,4 @@
 <?php
-// TODO insert logError('message error'); function
 function checkLogin()
 {
 	require('config.php');
@@ -15,21 +14,20 @@ function checkLogin()
 			$sessionDbuserDbConnectionection = new PDO("mysql:host=$req_dbhostname;dbname=$req_dbname", $req_dbusername, $req_dbpassword);
 			$sessionDbuserDbConnectionection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-			// Query con prepared statement e clausola WHERE
+			// Query with prepared statement and WHERE clause
 			$smtpSessionDbuserDbConnectionection = $sessionDbuserDbConnectionection->prepare("SELECT * FROM users WHERE sessionUniqId = :sessionUniqId");
 			$smtpSessionDbuserDbConnectionection->bindParam(':sessionUniqId', $sessionUniqId);
 
-			// Esecuzione della query con il valore del parametro
+			// Query with the parameter value
 			$smtpSessionDbuserDbConnectionection->execute();
 
-			// Controllo del numero di risultati
+			// Checking the number of results
 			$resultSessionDbuserDbConnectionection_count = $smtpSessionDbuserDbConnectionection->rowCount();
 			if ($resultSessionDbuserDbConnectionection_count !== 1) {
-				// TODO create a errorlog.txt file to save the error
-				throw new Exception("La query ha trovato più di una riga");
+				throw new Exception("The query found more than one line");
 			}
 
-			// Elaborazione del risultato
+			// Result processing
 			$resultSessionDbuserDbConnectionection = $smtpSessionDbuserDbConnectionection->fetch(PDO::FETCH_ASSOC);
 			if ($resultSessionDbuserDbConnectionection) {
 				$sessionError = 0;
@@ -63,13 +61,13 @@ function checkLogin()
 						$userDbConnection = new PDO("mysql:host=$req_dbhostname;dbname=$req_dbname", $req_dbusername, $req_dbpassword);
 						$userDbConnection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-						// Query con prepared statement e clausola WHERE
+						// Query with prepared statement and WHERE clause
 						$stmtUserDbConnection = $userDbConnection->prepare("SELECT * FROM USERS WHERE uniq_id = :uniq_id");
 						$stmtUserDbConnection->bindParam(':uniq_id', $resultSessionDbuserDbConnectionection['userUniqId']);
 						
 						$stmtUserDbConnection->execute();
 
-						// Elaborazione del risultato
+						// Result processing
 						$rowUserDbConnection = $stmtUserDbConnection->fetch(PDO::FETCH_ASSOC);
 						if ($rowUserDbConnection) {
 							if ($rowUserDbConnection['active'] == 1){
@@ -92,8 +90,7 @@ function checkLogin()
 							$validSeesion = false;
 						}
 					} catch (PDOException $e) {
-						// TODO INSERT ERROR IN LOG FILE
-						// echo "Errore di userDbConnectionessione al database: " . $e->getMessage();
+						logError('Error connecting to database: ' . $e->getMessage());
 						$validSeesion = false;
 					}
 
@@ -101,20 +98,18 @@ function checkLogin()
 					$userDbConnection = null;
 				}
 			} else {
-				// error TODO SPECIFY ERROR IN THE COMMENT
+				// error: can't find the session uniq code in the database
 				$validSeesion = false;
 			}
 		} catch (PDOException $e) {
-			// TODO INSERT ERROR IN LOG FILE
-			// echo "Errore di sessionDbuserDbConnectionectionessione al database: " . $e->getMessage();
+			logError('Error connecting to database: ' . $e->getMessage());
 			$validSeesion = false;
 		} catch (Exception $e) {
-			// TODO INSERT ERROR IN LOG FILE
-			// echo "Errore nella query: " . $e->getMessage();
+			logError('Error in the query: ' . $e->getMessage());
 			$validSeesion = false;
 		}
 
-		// Chiusura della sessionDbuserDbConnectionectionessione
+		// Connection closure
 		$sessionDbuserDbConnectionection = null;
 
 		if ($validSession === true){
@@ -123,10 +118,7 @@ function checkLogin()
 		}
 		else{
 			// session invalid: destroy and close session
-			// TODO redirect to login page with error details
-			
 			$needRedirect = true;
-			
 		}
 	} else {
 		// error: session variables non set, destroy session
