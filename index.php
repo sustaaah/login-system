@@ -1,5 +1,8 @@
 <?php
-require('auth/script/sessionCheck.php');
-checkLogin();
+function hello($userName = 'user'){
+	print('hello ' . $userName);
+}
 
+hello();
+hello('Giovanni');
 ?>

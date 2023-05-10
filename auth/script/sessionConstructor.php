@@ -2,7 +2,7 @@
 function login($uniqUserId, $username)
 {
 
-	require('config.php');
+	require_once('config.php');
 	ini_set('session.use_cookies', 1);
 	ini_set('session.use_only_cookies', 1);
 	ini_set('session.use_trans_id', 0);
