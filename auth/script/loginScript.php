@@ -1,5 +1,5 @@
 <?php
-require('config.php');
+require_once('config.php');
 
 $data = array(
 	'secret' => $req_hcaptcha_secretKey,

@@ -1,5 +1,5 @@
 <?php
-require('config.php');
+require_once('config.php');
 
 $data = array(
 	'secret' => $req_hcaptcha_secretKey,
@@ -150,7 +150,7 @@ if ($responseData->success) {
 		}
 
 		// all ok, setup session
-		require('sessionConstructor.php');
+		require_once('sessionConstructor.php');
 		login($userUniqId, $username);
 
 		// TODO redirect to verify.php page
