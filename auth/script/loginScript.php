@@ -46,6 +46,7 @@ if ($responseData->success) {
 			// Richiama la funzione per l'accesso
 			require('sessionConstructor.php');
 			login($user['uniq_id'], $username);
+			
 			print('login successful');
 		} else {
 			echo "Nome utente o password non validi.";

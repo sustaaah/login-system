@@ -33,7 +33,7 @@ if (isset($_GET['sessionError'])){
 	<h1>Log in to your account</h1>
 	<?php
 if($error !== false){
-	// TODO print error
+
 	print('<div>' . $error . '</div>');
 }
 ?>
