@@ -9,7 +9,7 @@ if (!isset($_SESSION['userUniqId'])){
 }
 
 //
-// TODO create a scrit tha check if the user logged in need to check mail
+// TODO create a script to check if the user logged in need to check mail
 //
 
 ?>

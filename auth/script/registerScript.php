@@ -14,6 +14,8 @@ $response = curl_exec($verify);
 // var_dump($response);
 $responseData = json_decode($response);
 
+$jsonResponse = array("status" => $status);
+
 if ($responseData->success) {
 	try {
 		$conn = new PDO("mysql:host=$req_dbhostname;dbname=$req_dbname", $req_dbusername, $req_dbpassword);
@@ -134,7 +136,6 @@ if ($responseData->success) {
 			//////////////////////////////////////////////////////////////
 
 			// TODO set the account as 'flagged' or 'blocked' as soon as the email is confirmed
-			// TODO redirect to verify.html page
 			//
 			// array params for account confirmation and activation
 			// 1: template name
@@ -146,14 +147,15 @@ if ($responseData->success) {
 			$params = array("template" => "accountConfirmation", "name" => $name, "surname" => $surname, "email" => $email, "confirmationCode" => $confirmCode);
 			require('mailer.php');
 			//////////////////////////////////////////////////////////////
+			// all ok, setup session
+			require_once('sessionConstructor.php'); 
+			login($userUniqId, $username);
 			$status = "success";
+			// TODO redirect to verify.html page
+			$jsonResponse['redirect'] = "https://" . $req_domain . $req_path_to_login . "auth/mailVerify.php";
 		}
 
-		// all ok, setup session
-		require_once('sessionConstructor.php');
-		login($userUniqId, $username);
 
-		// TODO redirect to verify.php page
 
 	} else {
 		logError('logical error');
@@ -164,6 +166,6 @@ if ($responseData->success) {
 	$status = 'error';
 }
 
-echo json_encode(array("status" => $status));
+echo json_encode($jsonResponse);
 die();
 ?>
