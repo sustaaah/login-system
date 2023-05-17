@@ -1,7 +1,7 @@
 <?php
 function checkLogin()
 {
-	require_once('config.php');
+	require('config.php');
 	session_start();
 
 	if (isset($_SESSION['sessionUniqId']) && isset($_SESSION['userUniqId'])) {

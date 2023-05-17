@@ -61,11 +61,12 @@ function submitRegistration(event) {
 			
 			var response = JSON.parse(xhr.responseText);
 			if (response.status == 'success') { // process success response
-				// TODO take the redirect page from json response and redirect
-			
+				window.location.href = response.redirect;
 			}
 			else{ // process error response
 				// TODO gateaway for errors
+				var ajaxErrors = response.error;
+
 			}
 
 

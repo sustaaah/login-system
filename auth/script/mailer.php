@@ -1,11 +1,11 @@
 <?php
-require_once('lib/PHPMailer/Exception.php');
-require_once('lib/PHPMailer/PHPMailer.php');
-require_once('lib/PHPMailer/SMTP.php');
+require('lib/PHPMailer/Exception.php');
+require('lib/PHPMailer/PHPMailer.php');
+require('lib/PHPMailer/SMTP.php');
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-require_once('config.php');
+require('config.php');
 
 if (isset($params['template'])) {
 	switch ($params['template']) {

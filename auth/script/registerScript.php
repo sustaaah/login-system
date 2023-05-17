@@ -1,5 +1,5 @@
 <?php
-require_once('config.php');
+require('config.php');
 
 $data = array(
 	'secret' => $req_hcaptcha_secretKey,
@@ -14,7 +14,6 @@ $response = curl_exec($verify);
 // var_dump($response);
 $responseData = json_decode($response);
 
-$jsonResponse = array("status" => $status);
 
 if ($responseData->success) {
 	try {
@@ -25,16 +24,16 @@ if ($responseData->success) {
 		logError("Failed to connect to the database: " . $e->getMessage());
 		die();
 	}
-
+	
 	// User input data
 	$name = $_POST['firstName']; // User's first name
 	$surname = $_POST['lastName']; // User's last name
 	$email = $_POST['email']; // Email of the account to register
 	$username = $_POST['username']; // Username of the account to register
 	$password = $_POST['password']; // Password of the account to register
-
+	
 	$validationName = $validationSurname = $validationEmail = $validationUsername = $validationPassword = 0;
-
+	
 	// Sanitize and validate user input
 	$regexName = "/^([A-Z][a-z]+\s)?[A-Z][a-z]+$/";
 	$name = trim($name);
@@ -47,25 +46,25 @@ if ($responseData->success) {
 		$validationSurname = 1;
 		die("Error: Last name is missing.");
 	}
-
+	
 	$email = filter_var($email, FILTER_SANITIZE_EMAIL);
 	if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
 		$validationEmail = 1;
 		die("Error: Invalid email.");
 	}
-
+	
 	$username = filter_var($username, FILTER_SANITIZE_STRING);
 	if (empty($username)) {
 		$validationUsername = 1;
 		die("Error: Username is missing.");
 	}
-
+	
 	$regexPassword = "/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#\$!€()\-])(?=.*[^\s])[\S]{8,32}$/";
 	if (!preg_match($regexPassword, $password)) {
 		$validationPassword = 1;
 		die("Error: Insert a valid password");
 	}
-
+	
 	$validationCheck = $validationName + $validationSurname + $validationEmail + $validationUsername + $validationPassword;
 	if ($validationCheck != 0) {
 		// TODO insert error gateaway
@@ -73,16 +72,16 @@ if ($responseData->success) {
 			
 		}
 		if ($validationSurname != 1) {
-
+			
 		}
 		if ($validationUsername != 1) {
 
 		}
 		if ($validationPassword != 1) {
-
+			
 		}
 		if ($validationEmail != 1) {
-
+			
 		}
 	} elseif ($validationCheck == 0) {
 		// Check if the account already exists in the database
@@ -92,7 +91,7 @@ if ($responseData->success) {
 		$stmt->bindParam(":username", $username);
 		$stmt->execute();
 		$result = $stmt->fetch(PDO::FETCH_ASSOC);
-
+		
 		if ($result) {
 			// Account already exists
 			die("Error: Account already exists.");
@@ -100,7 +99,7 @@ if ($responseData->success) {
 			// Register the new account in the database
 			$query = "INSERT INTO users (uniq_id, name, surname, email, username, password, tfa_active, account_active, flagged_to, confirm_code, last_login, last_password_change, login_attempt, registration_date) VALUES (:userUniqId, :name, :surname, :email, :username, :password, :tfaActive, :accountActive,:flaggedTo, :confirmCode, :lastLogin, :lastPasswordChange, :loginAttempt, :registration_date)";
 			$stmt = $conn->prepare($query);
-
+			
 			// prepare variables
 			$userUniqId = sha1($username . uniqid());
 			$confirmCode = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
@@ -114,7 +113,7 @@ if ($responseData->success) {
 			$accountActive = 0;
 			// Hash the password before inserting it into the database
 			$hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-
+			
 			// bind params //
 			$stmt->bindParam(":userUniqId", $userUniqId);
 			$stmt->bindParam(":name", $name);
@@ -130,7 +129,7 @@ if ($responseData->success) {
 			$stmt->bindParam(":lastPasswordChange", $timestamp);
 			$stmt->bindParam(":loginAttempt", $loginAttempt);
 			$stmt->bindParam(":registration_date", $timestamp);
-
+			
 			$stmt->execute();
 
 			//////////////////////////////////////////////////////////////
@@ -148,15 +147,15 @@ if ($responseData->success) {
 			require('mailer.php');
 			//////////////////////////////////////////////////////////////
 			// all ok, setup session
-			require_once('sessionConstructor.php'); 
+			require('sessionConstructor.php'); 
 			login($userUniqId, $username);
 			$status = "success";
-			// TODO redirect to verify.html page
+			
 			$jsonResponse['redirect'] = "https://" . $req_domain . $req_path_to_login . "auth/mailVerify.php";
 		}
-
-
-
+		
+		
+		
 	} else {
 		logError('logical error');
 		$status = 'error';
@@ -166,6 +165,7 @@ if ($responseData->success) {
 	$status = 'error';
 }
 
+$jsonResponse = array("status" => $status);
 echo json_encode($jsonResponse);
 die();
 ?>

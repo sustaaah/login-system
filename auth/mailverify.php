@@ -1,5 +1,5 @@
 <?php
-require_once('script/config.php');
+require('script/config.php');
 
 session_start();
 if (!isset($_SESSION['userUniqId'])){
