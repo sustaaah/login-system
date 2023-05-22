@@ -24,7 +24,7 @@ if (isset($params['template'])) {
 			
 	}
 
-	$mail = new PHPMailer(true);
+	$mail = new PHPMailer();
 
 	try {
 		$mail->isSMTP();

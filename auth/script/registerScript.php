@@ -14,6 +14,8 @@ $response = curl_exec($verify);
 // var_dump($response);
 $responseData = json_decode($response);
 
+// initialize response array
+$jsonResponse = array();
 
 if ($responseData->success) {
 	try {
@@ -151,7 +153,7 @@ if ($responseData->success) {
 			login($userUniqId, $username);
 			$status = "success";
 			
-			$jsonResponse['redirect'] = "https://" . $req_domain . $req_path_to_login . "auth/mailVerify.php";
+			$jsonResponse['redirect'] = "https://" . $req_url_secured_index . "/auth/mailVerify.php";
 		}
 		
 		
@@ -165,7 +167,7 @@ if ($responseData->success) {
 	$status = 'error';
 }
 
-$jsonResponse = array("status" => $status);
+$jsonResponse['status'] = $status;
 echo json_encode($jsonResponse);
 die();
 ?>

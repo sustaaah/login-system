@@ -4,7 +4,7 @@ require('script/config.php');
 session_start();
 if (!isset($_SESSION['userUniqId'])){
 	// TODO finish redirecting
-	header("Location: https://" . $req_domain . $req_path_to_login . "auth/login.php?e=" . $sessionError);
+	header("Location: https://" . $req_domain . $req_path_to_login . "/auth/login.php?e=" . $sessionError);
 	die();
 }
 
