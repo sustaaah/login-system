@@ -1,4 +1,11 @@
 <?php
+require("auth/script/lib/JWT/JWT.php");
+require("auth/script/lib/JWT/Key.php");
+
+use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
+
+
 function login($uniqUserId, $username)
 {
 
@@ -54,4 +61,26 @@ function login($uniqUserId, $username)
 
 	$_SESSION['userUniqId'] = $uniqIdUser;
 	$_SESSION['sessionUniqId'] = $sessionUniqId;
+}
+
+function loginJWT($userUniqId, $username){
+	
+}
+
+function setJWT(){
+	
+}
+
+function modifyJWT(){
+	
+}
+
+function destroyJWT(){
+	
+}
+
+function getJWT($getFromCookie = true){
+	if ($getFromCookie){
+		
+	}
 }
